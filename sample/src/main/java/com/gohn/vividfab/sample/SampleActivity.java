@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.gohn.vividfab.ArcButton;
 import com.gohn.vividfab.VividFab;
+import com.gohn.vividfab.WallPosition;
 
 public class SampleActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -22,6 +23,7 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_main);
 
         final VividFab vividFab = findViewById(R.id.float_button);
+        vividFab.setStickWallPosition(WallPosition.RIGHT);
         vividFab.setMovableButtonImage(R.drawable.baseline_apps_white_24);
         vividFab.setDistance(dp2px(this, 120));
         vividFab.addArcItem(getArcButton("aaa", R.drawable.baseline_apps_white_24, this));

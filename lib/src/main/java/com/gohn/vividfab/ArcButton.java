@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
@@ -20,6 +21,7 @@ public class ArcButton extends FloatingActionButton {
     private boolean isOpened = false;
     private float oldX;
     private float oldY;
+    private VividFab vividFab;
 
     private ArcStatusListener listener;
 
@@ -43,17 +45,21 @@ public class ArcButton extends FloatingActionButton {
         setVisibility(INVISIBLE);
     }
 
+    public void setVividFab(VividFab vividFab) {
+        this.vividFab = vividFab;
+    }
+
     public void setArcStatusListener(ArcStatusListener listener) {
         this.listener = listener;
     }
 
-    public void open(float distance, int totalCount, int index, float x, float y, boolean isRight) {
+    public void open(float distance, int totalCount, int index, float x, float y, CornerPosition cornerPosition) {
         if (isOpened) return;
         isOpened = true;
 
         setVisibility(VISIBLE);
 
-        if (distance <= 0) distance = dp2px(context, 120);
+        if (distance <= 0) distance = Utils.dp2px(context, 120);
 
         setX(x);
         setY(y);
@@ -73,12 +79,32 @@ public class ArcButton extends FloatingActionButton {
         oldX = getX();
         oldY = getY();
 
-        float finalX = isRight ?
-                getX() - distance * (float) Math.cos(Math.toRadians((double) angle)) :
-                getX() + distance * (float) Math.cos(Math.toRadians((double) angle));
-        float finalY = getY() - distance * (float) Math.sin(Math.toRadians((double) angle));
+        float finalX = 0;
+        float finalY = 0;
 
-        double length = getLength(finalX - oldX, finalY - oldY);
+        Log.e("@@@@", "@@@@ " + cornerPosition);
+
+        switch (cornerPosition) {
+            case RIGHT_BOTTOM:
+                finalX = getX() - distance * (float) Math.cos(Math.toRadians((double) angle));
+                finalY = getY() - distance * (float) Math.sin(Math.toRadians((double) angle));
+                break;
+            case LEFT_BOTTOM:
+                finalX = getX() + distance * (float) Math.cos(Math.toRadians((double) angle));
+                finalY = getY() - distance * (float) Math.sin(Math.toRadians((double) angle));
+                break;
+            case RIGHT_TOP:
+                finalX = getX() - distance * (float) Math.cos(Math.toRadians((double) angle));
+                finalY = getY() + distance * (float) Math.sin(Math.toRadians((double) angle));
+                break;
+            case LEFT_TOP:
+                finalX = getX() + distance * (float) Math.cos(Math.toRadians((double) angle));
+                finalY = getY() + distance * (float) Math.sin(Math.toRadians((double) angle));
+                break;
+        }
+
+
+        double length = Utils.getLength(finalX - oldX, finalY - oldY);
 
         animate()
                 .x(finalX)
@@ -147,15 +173,5 @@ public class ArcButton extends FloatingActionButton {
 
     public boolean isOpened() {
         return isOpened;
-    }
-
-    public double getLength(float x, float y) {
-        return Math.sqrt(Math.pow(x, 2f) + Math.pow(y, 2f));
-    }
-
-    public int dp2px(Context context, int dp) {
-        Resources r = context.getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
-        return (int) px;
     }
 }

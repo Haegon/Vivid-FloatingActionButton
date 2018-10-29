@@ -2,30 +2,22 @@ package com.gohn.vividfab;
 
 import android.animation.Animator;
 import android.content.Context;
-import android.content.res.Resources;
 import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.View;
 
 public class MovableButton extends FloatingActionButton implements View.OnTouchListener {
-
-    private final static int ANCHOR_RT = 1 << 0;
-    private final static int ANCHOR_LT = 1 << 1;
-    private final static int ANCHOR_RB = 1 << 2;
-    private final static int ANCHOR_LB = 1 << 3;
-
     public interface StatusListener {
-        void onOpened(float x, float y, boolean isRight);
+        void onOpened(float x, float y, CornerPosition cornerPosition);
 
         void onClosed();
     }
 
     private final static float CLICK_DRAG_TOLERANCE = 15;
 
-    private int anchors = ANCHOR_RT | ANCHOR_LT | ANCHOR_RB | ANCHOR_LB;
+    private WallPosition wallPosition = WallPosition.ALL;
     private float downRawX, downRawY;
     private float dX, dY;
     private Context context;
@@ -104,13 +96,13 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
                 float upDY = upRawY - downRawY;
 
 
-                if (getLength(upDX, upDY) > CLICK_DRAG_TOLERANCE) {
+                if (Utils.getLength(upDX, upDY) > CLICK_DRAG_TOLERANCE) {
                     return true;
                 }
 
                 viewParent = (View) view.getParent();
 
-                double maxLength = getLength(view.getBottom(), view.getRight());
+                double maxLength = Utils.getLength(view.getBottom(), view.getRight());
 
                 if (!isOpened) {
                     open(view, viewParent);
@@ -133,28 +125,79 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
         oldX = view.getX();
         oldY = view.getY();
 
-        float finalX;
-        final float finalY = view.getBottom() - view.getHeight();
+        float finalX = view.getRight() - view.getHeight();
+        float finalY = view.getBottom() - view.getHeight();
 
-        float fab_margin = dp2px(context, 16);
-        boolean isRight;
-
-        if (view.getX() > viewParent.getWidth() / 2 - view.getWidth() / 2) {
-            finalX = viewParent.getRight() - view.getWidth();
-            finalX = Math.max(0, finalX) - fab_margin;
-            isRight = true;
-        } else {  //view near Left
-            finalX = viewParent.getLeft();
-            finalX = Math.min(viewParent.getWidth() - view.getWidth(), finalX) + fab_margin;
-            isRight = false;
+        switch (wallPosition) {
+            case ALL:
+                finalX = 0;
+                finalY = 0;
+                break;
+            case RIGHT:
+                finalX = view.getRight() - view.getWidth();
+                finalY = 0;
+                break;
+            case LEFT:
+                finalX = viewParent.getWidth() - view.getRight();
+                finalY = 0;
+                break;
+            case TOP:
+                finalX = 0;
+                finalY = viewParent.getHeight() - view.getBottom();
+                break;
+            case BOTTOM:
+                finalX = 0;
+                finalY = view.getBottom() - view.getHeight();
+                break;
         }
 
-        double maxLength = getLength(view.getBottom(), view.getRight());
-        double length = getLength(finalX - oldX, finalY - oldY);
+        float fab_margin = Utils.dp2px(context, 16);
+        boolean isRight = false;
+        boolean isBottom = false;
+
+        if (wallPosition == WallPosition.ALL || wallPosition == WallPosition.TOP || wallPosition == WallPosition.BOTTOM) {
+            if (view.getX() > viewParent.getWidth() / 2 - view.getWidth() / 2) {
+                finalX = viewParent.getRight() - view.getWidth();
+                finalX = Math.max(0, finalX) - fab_margin;
+                isRight = true;
+            } else {
+                finalX = viewParent.getLeft();
+                finalX = Math.min(viewParent.getWidth() - view.getWidth(), finalX) + fab_margin;
+                isRight = false;
+            }
+        }
+
+        if (wallPosition == WallPosition.ALL || wallPosition == WallPosition.RIGHT || wallPosition == WallPosition.LEFT) {
+            if (view.getY() > viewParent.getHeight() / 2 - view.getHeight() / 2) {
+                finalY = viewParent.getBottom() - view.getHeight();
+                finalY = Math.min(viewParent.getHeight() - view.getHeight(), finalY) - fab_margin;
+                isBottom = false;
+            } else {
+                finalY = viewParent.getTop();
+                finalY = Math.max(0, finalY) + fab_margin;
+                isBottom = true;
+            }
+        }
+
+        CornerPosition cornerPosition = null;
+        if (isRight && isBottom) {
+            cornerPosition = CornerPosition.RIGHT_TOP;
+        } else if (isRight && !isBottom) {
+            cornerPosition = CornerPosition.RIGHT_BOTTOM;
+        } else if (!isRight && isBottom) {
+            cornerPosition = CornerPosition.LEFT_TOP;
+        } else if (!isRight && !isBottom) {
+            cornerPosition = CornerPosition.LEFT_BOTTOM;
+        }
+
+
+        double maxLength = Utils.getLength(view.getBottom(), view.getRight());
+        double length = Utils.getLength(finalX - oldX, finalY - oldY);
 
         final float x = finalX;
         final float y = finalY;
-        final boolean isR = isRight;
+
+        final CornerPosition cp = cornerPosition;
 
         view.animate()
                 .x(finalX)
@@ -169,7 +212,7 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
                     @Override
                     public void onAnimationEnd(Animator animator) {
                         if (listener != null) {
-                            listener.onOpened(x, y, isR);
+                            listener.onOpened(x, y, cp);
                         }
                     }
 
@@ -190,8 +233,8 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
         float currentX = this.getX();
         float currentY = this.getY();
 
-        double maxLength = getLength(this.getBottom(), this.getRight());
-        double length = getLength(currentX - oldX, currentY - oldY);
+        double maxLength = Utils.getLength(this.getBottom(), this.getRight());
+        double length = Utils.getLength(currentX - oldX, currentY - oldY);
 
         this.animate()
                 .x(oldX)
@@ -221,13 +264,8 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
                 .start();
     }
 
-    public double getLength(float x, float y) {
-        return Math.sqrt(Math.pow(x, 2f) + Math.pow(y, 2f));
-    }
-
-    public int dp2px(Context context, int dp) {
-        Resources r = context.getResources();
-        float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, r.getDisplayMetrics());
-        return (int) px;
+    public void setStickWallPosition(WallPosition wallPosition) {
+        this.wallPosition = wallPosition;
+        invalidate();
     }
 }
