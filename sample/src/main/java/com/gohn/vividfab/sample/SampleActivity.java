@@ -23,13 +23,44 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         setContentView(R.layout.activity_main);
 
         final VividFab vividFab = findViewById(R.id.float_button);
-        vividFab.setStickWallPosition(WallPosition.RIGHT);
+        vividFab.setStickWallPosition(WallPosition.ALL);
         vividFab.setMovableButtonImage(R.drawable.baseline_apps_white_24);
         vividFab.setDistance(dp2px(this, 120));
         vividFab.addArcItem(getArcButton("aaa", R.drawable.baseline_apps_white_24, this));
         vividFab.addArcItem(getArcButton("bbb", R.drawable.baseline_apps_white_24, this));
         vividFab.addArcItem(getArcButton("ccc", R.drawable.baseline_apps_white_24, this));
         vividFab.addArcItem(getArcButton("ddd", R.drawable.baseline_apps_white_24, this));
+
+        findViewById(R.id.all).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                vividFab.setStickWallPosition(WallPosition.ALL);
+            }
+        });
+        findViewById(R.id.right).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                vividFab.setStickWallPosition(WallPosition.RIGHT);
+            }
+        });
+        findViewById(R.id.left).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                vividFab.setStickWallPosition(WallPosition.LEFT);
+            }
+        });
+        findViewById(R.id.top).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                vividFab.setStickWallPosition(WallPosition.TOP);
+            }
+        });
+        findViewById(R.id.bottom).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                vividFab.setStickWallPosition(WallPosition.BOTTOM);
+            }
+        });
     }
 
     @Override

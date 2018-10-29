@@ -165,6 +165,8 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
                 finalX = Math.min(viewParent.getWidth() - view.getWidth(), finalX) + fab_margin;
                 isRight = false;
             }
+            if (wallPosition == WallPosition.BOTTOM) isBottom = true;
+            else if (wallPosition == WallPosition.TOP) isBottom = false;
         }
 
         if (wallPosition == WallPosition.ALL || wallPosition == WallPosition.RIGHT || wallPosition == WallPosition.LEFT) {
@@ -177,6 +179,8 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
                 finalY = Math.max(0, finalY) + fab_margin;
                 isBottom = true;
             }
+            if (wallPosition == WallPosition.RIGHT) isRight = true;
+            else if (wallPosition == WallPosition.LEFT) isRight = false;
         }
 
         CornerPosition cornerPosition = null;

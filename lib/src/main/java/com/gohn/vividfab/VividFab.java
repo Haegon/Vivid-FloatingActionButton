@@ -41,9 +41,11 @@ public class VividFab extends FrameLayout {
         arcViewGroup = new FrameLayout(context);
         LayoutParams paramsArcViewGroup = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         arcViewGroup.setLayoutParams(paramsArcViewGroup);
+        arcViewGroup.setClickable(false);
         arcViewGroup.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                arcViewGroup.setClickable(true);
                 for (ArcButton arcButton : arcButtons) {
                     arcButton.close();
                 }
@@ -62,6 +64,7 @@ public class VividFab extends FrameLayout {
         movableButton.setStatusListener(new MovableButton.StatusListener() {
             @Override
             public void onOpened(float x, float y, CornerPosition cornerPosition) {
+                arcViewGroup.setClickable(true);
                 for (ArcButton arcButton : arcButtons) {
                     int index = arcButtons.indexOf(arcButton);
                     arcButton.open(distance, arcButtons.size(), index, x, y, cornerPosition);
@@ -82,6 +85,7 @@ public class VividFab extends FrameLayout {
 
             @Override
             public void onClosed() {
+                arcViewGroup.setClickable(false);
                 for (ArcButton arcButton : arcButtons) {
                     arcButton.close();
                 }
