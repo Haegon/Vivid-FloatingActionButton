@@ -45,7 +45,7 @@ public class VividFab extends FrameLayout {
         arcViewGroup.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
-                arcViewGroup.setClickable(true);
+                arcViewGroup.setClickable(false);
                 for (ArcButton arcButton : arcButtons) {
                     arcButton.close();
                 }
@@ -58,7 +58,6 @@ public class VividFab extends FrameLayout {
         paramsFAB.gravity = Gravity.BOTTOM | Gravity.RIGHT;
         paramsFAB.setMargins(Utils.dp2px(context, 16), Utils.dp2px(context, 16), Utils.dp2px(context, 16), Utils.dp2px(context, 16));
         movableButton.setLayoutParams(paramsFAB);
-//        movableButton.setImageResource(R.drawable.baseline_apps_white_24);
         addView(movableButton);
 
         movableButton.setStatusListener(new MovableButton.StatusListener() {

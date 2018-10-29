@@ -173,11 +173,11 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
             if (view.getY() > viewParent.getHeight() / 2 - view.getHeight() / 2) {
                 finalY = viewParent.getBottom() - view.getHeight();
                 finalY = Math.min(viewParent.getHeight() - view.getHeight(), finalY) - fab_margin;
-                isBottom = false;
+                isBottom = true;
             } else {
                 finalY = viewParent.getTop();
                 finalY = Math.max(0, finalY) + fab_margin;
-                isBottom = true;
+                isBottom = false;
             }
             if (wallPosition == WallPosition.RIGHT) isRight = true;
             else if (wallPosition == WallPosition.LEFT) isRight = false;
@@ -185,13 +185,13 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
 
         CornerPosition cornerPosition = null;
         if (isRight && isBottom) {
-            cornerPosition = CornerPosition.RIGHT_TOP;
-        } else if (isRight && !isBottom) {
             cornerPosition = CornerPosition.RIGHT_BOTTOM;
+        } else if (isRight && !isBottom) {
+            cornerPosition = CornerPosition.RIGHT_TOP;
         } else if (!isRight && isBottom) {
-            cornerPosition = CornerPosition.LEFT_TOP;
-        } else if (!isRight && !isBottom) {
             cornerPosition = CornerPosition.LEFT_BOTTOM;
+        } else if (!isRight && !isBottom) {
+            cornerPosition = CornerPosition.LEFT_TOP;
         }
 
 
