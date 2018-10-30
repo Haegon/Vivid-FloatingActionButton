@@ -24,6 +24,7 @@ public class VividFab extends FrameLayout {
     MovableButton movableButton;
     float distance;
     WallPosition wallPosition;
+    boolean dimmedEnable = true;
 
     public VividFab(Context context) {
         this(context, null);
@@ -67,7 +68,9 @@ public class VividFab extends FrameLayout {
                 for (ArcButton arcButton : arcButtons) {
                     int index = arcButtons.indexOf(arcButton);
                     arcButton.open(distance, arcButtons.size(), index, x, y, cornerPosition);
+                }
 
+                if (dimmedEnable) {
                     ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.parseColor("#00000000"), Color.parseColor("#64000000"));
                     colorAnimation.setDuration(300);
                     colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -90,6 +93,14 @@ public class VividFab extends FrameLayout {
                 }
             }
         });
+    }
+
+    public void setDimmedEnable(boolean enable) {
+        dimmedEnable = enable;
+    }
+
+    public boolean getDimmedEnable() {
+        return dimmedEnable;
     }
 
     public WallPosition getStickWallPosition() {
@@ -127,17 +138,20 @@ public class VividFab extends FrameLayout {
                 }
 
                 movableButton.close();
-                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.parseColor("#64000000"), Color.parseColor("#00000000"));
-                colorAnimation.setDuration(300);
-                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animator) {
-                        arcViewGroup.setBackgroundColor((int) animator.getAnimatedValue());
-                    }
+                if (dimmedEnable) {
+                    ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), Color.parseColor("#64000000"), Color.parseColor("#00000000"));
+                    colorAnimation.setDuration(300);
+                    colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
 
-                });
-                colorAnimation.start();
+                        @Override
+                        public void onAnimationUpdate(ValueAnimator animator) {
+                            arcViewGroup.setBackgroundColor((int) animator.getAnimatedValue());
+                        }
+
+                    });
+                    colorAnimation.start();
+                }
             }
         });
         arcButtons.add(arcButton);

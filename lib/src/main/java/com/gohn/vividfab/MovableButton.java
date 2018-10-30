@@ -16,6 +16,7 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
     }
 
     private final static float CLICK_DRAG_TOLERANCE = 15;
+    private final static float CLICK_DRAG_ALLOWANCE = 50;
 
     private WallPosition wallPosition = WallPosition.ALL;
     private float downRawX, downRawY;
@@ -25,6 +26,7 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
     private float oldX;
     private float oldY;
     private StatusListener listener;
+    private boolean isForceCancelled = false;
 
     public MovableButton(Context context) {
         super(context);
@@ -64,10 +66,6 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
                 return true;
 
             case MotionEvent.ACTION_MOVE:
-                if (isOpened) {
-                    return true;
-                }
-
                 int viewWidth = view.getWidth();
                 int viewHeight = view.getHeight();
 
@@ -82,6 +80,17 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
                 float newY = motionEvent.getRawY() + dY;
                 newY = Math.max(0, newY);
                 newY = Math.min(parentHeight - viewHeight, newY);
+
+                double r = Utils.getLength(Math.abs(view.getX() - newX), Math.abs(view.getY() - newY));
+                if (isOpened && r < Utils.dp2px(context, CLICK_DRAG_ALLOWANCE)) {
+                    return true;
+                } else if (isOpened && r > Utils.dp2px(context, CLICK_DRAG_ALLOWANCE)) {
+                    if (listener != null) {
+                        listener.onClosed();
+                    }
+                    isOpened = false;
+                    isForceCancelled = true;
+                }
 
                 view.setX(newX);
                 view.setY(newY);
@@ -122,6 +131,8 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
     }
 
     public void open(View view, View viewParent) {
+        if (isOpened) return;
+
         oldX = view.getX();
         oldY = view.getY();
 
@@ -234,13 +245,17 @@ public class MovableButton extends FloatingActionButton implements View.OnTouchL
     }
 
     public void close() {
-        float currentX = this.getX();
-        float currentY = this.getY();
+        if (!isOpened && isForceCancelled) {
+            return;
+        }
 
-        double maxLength = Utils.getLength(this.getBottom(), this.getRight());
+        float currentX = getX();
+        float currentY = getY();
+
+        double maxLength = Utils.getLength(getBottom(), getRight());
         double length = Utils.getLength(currentX - oldX, currentY - oldY);
 
-        this.animate()
+        animate()
                 .x(oldX)
                 .y(oldY)
                 .setDuration(300)

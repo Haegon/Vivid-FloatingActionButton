@@ -82,8 +82,6 @@ public class ArcButton extends FloatingActionButton {
         float finalX = 0;
         float finalY = 0;
 
-        Log.e("@@@@", "@@@@ " + cornerPosition);
-
         switch (cornerPosition) {
             case RIGHT_BOTTOM:
                 finalX = getX() - distance * (float) Math.cos(Math.toRadians((double) angle));
