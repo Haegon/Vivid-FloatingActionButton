@@ -9,7 +9,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 
-public class ArcButton extends FloatingActionButton {
+class ArcButton extends FloatingActionButton {
 
     public interface ArcStatusListener {
         void onOpenFinished();

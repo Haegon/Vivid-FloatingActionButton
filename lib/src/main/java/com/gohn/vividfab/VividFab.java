@@ -7,6 +7,7 @@ import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.support.annotation.DrawableRes;
+import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -20,7 +21,7 @@ import java.util.List;
 public class VividFab extends FrameLayout {
     Context context;
     FrameLayout arcViewGroup;
-    List<ArcButton> arcButtons = new ArrayList<>();
+    List<FloatingActionButton> arcButtons = new ArrayList<>();
     MovableButton movableButton;
     float distance;
     WallPosition wallPosition;
@@ -47,8 +48,9 @@ public class VividFab extends FrameLayout {
             @Override
             public void onClick(View view) {
                 arcViewGroup.setClickable(false);
-                for (ArcButton arcButton : arcButtons) {
-                    arcButton.close();
+                for (FloatingActionButton arcButton : arcButtons) {
+                    if (arcButton instanceof ArcButton)
+                        ((ArcButton) arcButton).close();
                 }
             }
         });
@@ -65,9 +67,10 @@ public class VividFab extends FrameLayout {
             @Override
             public void onOpened(float x, float y, CornerPosition cornerPosition) {
                 arcViewGroup.setClickable(true);
-                for (ArcButton arcButton : arcButtons) {
+                for (FloatingActionButton arcButton : arcButtons) {
                     int index = arcButtons.indexOf(arcButton);
-                    arcButton.open(distance, arcButtons.size(), index, x, y, cornerPosition);
+                    if (arcButton instanceof ArcButton)
+                        ((ArcButton) arcButton).open(distance, arcButtons.size(), index, x, y, cornerPosition);
                 }
 
                 if (dimmedEnable) {
@@ -88,8 +91,9 @@ public class VividFab extends FrameLayout {
             @Override
             public void onClosed() {
                 arcViewGroup.setClickable(false);
-                for (ArcButton arcButton : arcButtons) {
-                    arcButton.close();
+                for (FloatingActionButton arcButton : arcButtons) {
+                    if (arcButton instanceof ArcButton)
+                        ((ArcButton) arcButton).close();
                 }
             }
         });
@@ -123,9 +127,11 @@ public class VividFab extends FrameLayout {
         movableButton.setBackgroundTintList(ColorStateList.valueOf(color));
     }
 
-    public void addArcItem(ArcButton arcButton) {
-        arcButton.setVividFab(this);
-        arcButton.setArcStatusListener(new ArcButton.ArcStatusListener() {
+    public void addArcItem(FloatingActionButton arcButton) {
+        if (!(arcButton instanceof ArcButton)) return;
+
+        ((ArcButton)arcButton).setVividFab(this);
+        ((ArcButton)arcButton).setArcStatusListener(new ArcButton.ArcStatusListener() {
             @Override
             public void onOpenFinished() {
 
@@ -133,8 +139,10 @@ public class VividFab extends FrameLayout {
 
             @Override
             public void onCloseFinished() {
-                for (ArcButton arcButton : arcButtons) {
-                    if (arcButton.isOpened()) return;
+                for (FloatingActionButton arcButton : arcButtons) {
+                    if (arcButton instanceof ArcButton) {
+                        if (((ArcButton) arcButton).isOpened()) return;
+                    }
                 }
 
                 movableButton.close();
@@ -158,7 +166,7 @@ public class VividFab extends FrameLayout {
         arcViewGroup.addView(arcButton);
     }
 
-    public static ArcButton makeArcButton(Context context) {
+    public static FloatingActionButton makeArcButton(Context context) {
         ArcButton arcButton = new ArcButton(context);
         LayoutParams paramsArc = new LayoutParams(Utils.dp2px(context, 50), Utils.dp2px(context, 50));
         arcButton.setCustomSize(Utils.dp2px(context, 50));

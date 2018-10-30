@@ -6,12 +6,12 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.DrawableRes;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.util.TypedValue;
 import android.view.View;
 import android.widget.Toast;
 
-import com.gohn.vividfab.ArcButton;
 import com.gohn.vividfab.VividFab;
 import com.gohn.vividfab.WallPosition;
 
@@ -81,14 +81,14 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         }
     }
 
-    private ArcButton getArcButton(String tag, @DrawableRes int resourceId, View.OnClickListener onClickListener) {
-        ArcButton arcButton = VividFab.makeArcButton(this);
-        arcButton.setImageResource(resourceId);
-        arcButton.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#876543")));
-        arcButton.setOnClickListener(onClickListener);
-        arcButton.setTag(tag);
+    private FloatingActionButton getArcButton(String tag, @DrawableRes int resourceId, View.OnClickListener onClickListener) {
+        FloatingActionButton fab = VividFab.makeArcButton(this);
+        fab.setImageResource(resourceId);
+        fab.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#876543")));
+        fab.setOnClickListener(onClickListener);
+        fab.setTag(tag);
 
-        return arcButton;
+        return fab;
     }
 
 

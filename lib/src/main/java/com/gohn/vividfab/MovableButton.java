@@ -8,7 +8,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
-public class MovableButton extends FloatingActionButton implements View.OnTouchListener {
+class MovableButton extends FloatingActionButton implements View.OnTouchListener {
     public interface StatusListener {
         void onOpened(float x, float y, CornerPosition cornerPosition);
 
