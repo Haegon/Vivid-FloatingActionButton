@@ -17,6 +17,11 @@ import com.gohn.vividfab.WallPosition;
 
 public class SampleActivity extends AppCompatActivity implements View.OnClickListener {
 
+    private final static String PLAY = "play";
+    private final static String FF = "ff";
+    private final static String REW = "rew";
+    private final static String PAUSE = "pause";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,10 +31,10 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
         vividFab.setStickWallPosition(WallPosition.ALL);
         vividFab.setMovableButtonImage(R.drawable.baseline_apps_white_24);
         vividFab.setDistance(dp2px(this, 120));
-        vividFab.addArcItem(getArcButton("aaa", R.drawable.baseline_apps_white_24, this));
-        vividFab.addArcItem(getArcButton("bbb", R.drawable.baseline_apps_white_24, this));
-        vividFab.addArcItem(getArcButton("ccc", R.drawable.baseline_apps_white_24, this));
-        vividFab.addArcItem(getArcButton("ddd", R.drawable.baseline_apps_white_24, this));
+        vividFab.addArcItem(getArcButton(PLAY, android.R.drawable.ic_media_play, this));
+        vividFab.addArcItem(getArcButton(FF, android.R.drawable.ic_media_ff, this));
+        vividFab.addArcItem(getArcButton(REW, android.R.drawable.ic_media_rew, this));
+        vividFab.addArcItem(getArcButton(PAUSE, android.R.drawable.ic_media_pause, this));
 
         findViewById(R.id.all).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,17 +71,17 @@ public class SampleActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View view) {
         switch ((String) view.getTag()) {
-            case "aaa":
-                Toast.makeText(this, "aaa clicked", Toast.LENGTH_SHORT).show();
+            case PLAY:
+                Toast.makeText(this, PLAY + " clicked", Toast.LENGTH_SHORT).show();
                 break;
-            case "bbb":
-                Toast.makeText(this, "bbb clicked", Toast.LENGTH_SHORT).show();
+            case FF:
+                Toast.makeText(this, FF + " clicked", Toast.LENGTH_SHORT).show();
                 break;
-            case "ccc":
-                Toast.makeText(this, "ccc clicked", Toast.LENGTH_SHORT).show();
+            case REW:
+                Toast.makeText(this, REW + " clicked", Toast.LENGTH_SHORT).show();
                 break;
-            case "ddd":
-                Toast.makeText(this, "ddd clicked", Toast.LENGTH_SHORT).show();
+            case PAUSE:
+                Toast.makeText(this, PAUSE + " clicked", Toast.LENGTH_SHORT).show();
                 break;
         }
     }
